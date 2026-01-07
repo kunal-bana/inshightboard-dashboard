@@ -18,10 +18,15 @@ import type { RootState } from "../../redux/store";
 import { canViewRevenue } from "../../utils/permissions";
 import { useDashboard } from "../../hooks/useDashboard";
 import { formatCurrency } from "../../utils/format";
+import ProductsSoldCard from "../../components/ProductsSoldCard";
+import { useUserProductsSold } from "../../hooks/useUserProductsSold";
 
 export default function Dashboard() {
   const {stats,loading,error,refetch } = useDashboard();
   const role = useSelector((state: RootState) => state.auth.user?.role);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { count } = useUserProductsSold(user?.id);
+
   useEffect(() => {
     document.title = "Dashboard | Admin Panel";
   }, []);
@@ -68,6 +73,10 @@ const usersByRole = transformUsersByRole(stats);
             value={formatCurrency(stats.totalRevenue)}
             icon={<CurrencyRupeeIcon />}/>
         </Grid>)}
+        {user?.role === "User" && (
+          <Grid size={{ xs: 12, md: 4 }}>
+            <ProductsSoldCard value={count}/>
+          </Grid>)}
 
         <Grid size={{ xs: 12, md: 4 }}>
           <KpiCard

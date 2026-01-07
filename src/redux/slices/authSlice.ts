@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export type UserRole = "Admin" | "Manager" | "User";
 
 interface User {
+  id: number;
   name: string;
   email: string;
   role: UserRole;
@@ -37,13 +38,14 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess: (
   state,
-  action: PayloadAction<{ name: string; email: string; created: string, rememberMe: boolean }>
+  action: PayloadAction<{ name: string; email: string; created: string, rememberMe: boolean, id: number }>
 ) => {
   const derivedRole = getRoleFromEmail(action.payload.email);
 
   state.isAuthenticated = true;
   state.rememberMe = action.payload.rememberMe;
   state.user = {
+    id: action.payload.id,
     name: action.payload.name,
     email: action.payload.email,
     role: derivedRole,

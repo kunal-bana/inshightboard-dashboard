@@ -7,7 +7,6 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
-import { useTheme, useMediaQuery } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import type { ColDef } from "ag-grid-community";
 import {
@@ -27,14 +26,27 @@ interface Report {
   product: string;
   amount: number;
   status: string;
+  quantity: number;
+}
+
+interface AggregatedRow {
+  user: string;
+  product: string;
+  quantity: number;
+  amount: number;
+  status?: string;
+}
+
+interface MonthlyRevenue {
+  month: string;
+  revenue: number;
 }
 
 export default function Reports() {
   const [reports, setReports] = useState<Report[]>([]);
   const [role, setRole] = useState("");
   const [product, setProduct] = useState("");
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (role) params.append("role", role);
@@ -45,59 +57,70 @@ export default function Reports() {
       .then(setReports);
   }, [role, product]);
 
-  const totalRevenue = useMemo(
-    () => reports.reduce((sum, r) => sum + r.amount, 0),
-    [reports]
-  );
+  const tableData = useMemo(() => {
+  const map = new Map<string, AggregatedRow>();
 
-  const totalOrders = reports.length;
+  reports.forEach((r) => {
+    const key = `${r.user}-${r.product}`;
 
-  const trendData = useMemo(
-    () =>
-      reports.map((r) => ({
-        date: r.date,
+    if (!map.has(key)) {
+      map.set(key, {
+        user: r.user,
+        product: r.product,
+        quantity: r.quantity,
         amount: r.amount,
-      })),
-    [reports]
+        status: r.status,
+      });
+    } else {
+      const existing = map.get(key)!;
+      existing.quantity += r.quantity;
+      existing.amount += r.amount;
+    }
+  });
+
+  return Array.from(map.values());
+}, [reports]);
+  const totalRevenue = useMemo(
+    () => tableData.reduce((sum, r) => sum + r.amount, 0),
+    [tableData]
   );
+
+  const totalProductsSold = useMemo(
+    () => tableData.reduce((sum, r) => sum + r.quantity, 0),
+    [tableData]
+  );
+
+  const monthlyTrend: MonthlyRevenue[] = useMemo(() => {
+    const map = new Map<string, number>();
+
+    reports.forEach((r) => {
+      const month = new Date(r.date).toLocaleString("default", {
+        month: "short",
+        year: "numeric",
+      });
+
+      map.set(month, (map.get(month) || 0) + r.amount);
+    });
+
+    return Array.from(map.entries()).map(([month, revenue]) => ({
+      month,
+      revenue,
+    }));
+  }, [reports]);
 
   const columnDefs: ColDef[] = [
-  {
-    headerName: "Date",
-    field: "date",
-    flex: 1,
-  },
-  {
-    headerName: "Product",
-    field: "product",
-    flex: 1,
-  },
-  {
-    headerName: "Amount",
-    field: "amount",
-    flex: 1,
-    valueFormatter: (p) => `₹${p.value.toLocaleString()}`,
-  },
+    { headerName: "User", field: "user", flex: 1.5 },
+    { headerName: "Product", field: "product", flex: 1 },
+    { headerName: "Quantity Sold", field: "quantity", flex: 1 },
+    {
+      headerName: "Amount",
+      field: "amount",
+      flex: 1,
+      valueFormatter: (p) => `₹${p.value.toLocaleString()}`,
+    },
+    { headerName: "Status", field: "status", flex: 1 },
+  ];
 
-  {
-    headerName: "User",
-    field: "user",
-    flex: 1.2,
-    hide: isMobile,
-  },
-  {
-    headerName: "Role",
-    field: "role",
-    flex: 1,
-    hide: isMobile,
-  },
-  {
-    headerName: "Status",
-    field: "status",
-    flex: 1,
-    hide: isMobile,
-  },
-];
   const defaultColDef = {
     sortable: true,
     filter: true,
@@ -106,23 +129,20 @@ export default function Reports() {
 
   return (
     <Box>
+      {/* HEADER */}
       <Box
-      sx={{display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 2,
-        mb: 2,
-        mt: 1,
-        flexWrap: "wrap"}}>
-      <Typography variant="h5" fontWeight={600} mb={2}>
-        Reports
-      </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            flexWrap: "wrap",
-          }}>
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          mb: 2,
+          mt:2,
+        }}>
+        <Typography variant="h5" fontWeight={600}>
+          Reports
+        </Typography>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
           <TextField
             select
             size="small"
@@ -148,14 +168,13 @@ export default function Reports() {
             <MenuItem value="Accessories">Accessories</MenuItem>
           </TextField>
         </Box>
-      </Box> 
+      </Box>
+
       {/* KPIs */}
       <Grid container spacing={3} mb={3}>
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="caption" color="text.secondary">
-              Total Revenue
-            </Typography>
+            <Typography variant="caption">Total Revenue</Typography>
             <Typography variant="h6" fontWeight={600}>
               ₹{totalRevenue.toLocaleString()}
             </Typography>
@@ -164,52 +183,51 @@ export default function Reports() {
 
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="caption" color="text.secondary">
-              Total Orders
-            </Typography>
+            <Typography variant="caption">Products Sold</Typography>
             <Typography variant="h6" fontWeight={600}>
-              {totalOrders}
+              {totalProductsSold}
             </Typography>
           </Paper>
         </Grid>
       </Grid>
 
+      {/* TREND */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} mb={1}>
-          Revenue Trend
+          Monthly Revenue Trend
         </Typography>
         <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={trendData}>
-            <XAxis dataKey="date" />
+          <LineChart data={monthlyTrend}>
+            <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
             <Line
               type="monotone"
-              dataKey="amount"
+              dataKey="revenue"
               stroke="#1976d2"
               strokeWidth={2}
-              style={{ outline: "none" }}
             />
           </LineChart>
         </ResponsiveContainer>
       </Paper>
 
-      {/* Table */}
+      {/* TABLE */}
       <Paper sx={{ p: 2 }}>
         <Typography variant="subtitle1" fontWeight={600} mb={1}>
-          Detailed Report
+          Sales Breakdown
         </Typography>
 
         <Box className="ag-theme-quartz">
           <AgGridReact
             theme="legacy"
             domLayout="autoHeight"
-            rowData={reports}
+            rowData={tableData}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
             pagination={true}
-            paginationPageSize={10}
-            paginationPageSizeSelector={[5, 10, 15]}/>
+            paginationPageSize={5}
+            paginationPageSizeSelector={[5, 10, 20]}
+          />
         </Box>
       </Paper>
     </Box>

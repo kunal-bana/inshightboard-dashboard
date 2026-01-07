@@ -167,6 +167,13 @@ export const handlers = [
     ]);
   }),
 
+  http.get("/api/users/:id/products-sold", ({ params }) => {
+  const id = Number(params.id);
+  return HttpResponse.json({
+    totalProductsSold: id * 4 + 12,
+  });
+}),
+
   // User history
   http.get("/api/users/:id/history", ({ params }) => {
     const id = Number(params.id);

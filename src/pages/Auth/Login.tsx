@@ -48,6 +48,7 @@ export default function Login() {
 
         dispatch(
           loginSuccess({
+            id: matchedUser.id,
             name: matchedUser.name,
             email: matchedUser.email,
             created: matchedUser.created,

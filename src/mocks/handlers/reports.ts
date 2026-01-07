@@ -1,44 +1,41 @@
 import { http, HttpResponse } from "msw";
 
-const reports = [
-  {
-    id: 1,
-    date: "2024-06-01",
-    user: "Rahul Sharma",
-    role: "Manager",
-    product: "Laptop",
-    amount: 45000,
-    status: "Completed",
-  },
-  {
-    id: 2,
-    date: "2024-06-02",
-    user: "Neha Verma",
-    role: "Manager",
-    product: "Accessories",
-    amount: 12000,
-    status: "Completed",
-  },
-  {
-    id: 3,
-    date: "2024-06-03",
-    user: "Kunal Bana",
-    role: "Admin",
-    product: "Mobiles",
-    amount: 30000,
-    status: "Pending",
-  },
-  {
-    id: 4,
-    date: "2024-07-10",
-    user: "Prakhar Pandey",
-    role: "Manager",
-    product: "Mobiles",
-    amount: 25000,
-    status: "Completed",
-  },
-];
+const reports = Array.from({ length: 120 }).map((_, i) => {
+  const products = ["Laptop", "Mobiles", "Accessories"];
+  const users = [
+    { name: "Rahul Sharma", role: "Manager" },
+    { name: "Amit Malhotra", role: "Admin" },
+    { name: "Neha Verma", role: "Manager" },
+    { name: "Kunal Bana", role: "Admin" },
+    { name: "Vishal Kumar", role: "Manager" },
+    { name: "Prakhar Pandey", role: "Manager" },
+    { name: "Sneha Kapoor", role: "Admin" },  
+    { name: "User 1", role: "User" },
+    { name: "User 2", role: "User" },
+    { name: "User 3", role: "User" },
+    { name: "User 4", role: "User" },
+  ];
 
+  const product = products[i % products.length];
+  const user = users[i % users.length];
+
+  const quantity = Math.floor(Math.random() * 10) + 1; 
+  const unitPrice =
+    product === "Laptop" ? 45000 :
+    product === "Mobiles" ? 25000 :
+    5000;
+
+  return {
+    id: i + 1,
+    date: `2025-${String((i % 12) + 1).padStart(2, "0")}-15`,
+    user: user.name,
+    role: user.role,
+    product,
+    quantity,
+    amount: quantity * unitPrice,
+    status: "Completed",
+  };
+});
 export const reportsHandlers = [
   http.get("/api/reports", ({ request }) => {
     const url = new URL(request.url);
