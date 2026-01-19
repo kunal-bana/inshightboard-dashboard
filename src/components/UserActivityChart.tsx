@@ -20,12 +20,12 @@ export default function UserActivityChart({
   data: Activity[];
 }) {
   return (
-    <Card sx={{ p: 3, height: "100%" }}>
+    <Card sx={{ p: 2, height: "100%" }}>
       <Typography fontWeight={600} mb={1}>
         Activity (Last 7 days)
       </Typography>
 
-      <Box height={220}>
+      <Box height={220} mt={6}>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />

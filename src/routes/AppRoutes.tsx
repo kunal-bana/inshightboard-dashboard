@@ -12,27 +12,24 @@ import ProtectedRoute from "./ProtectedRoutes";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* 🔓 Public route */}
       <Route path="/login" element={<Login />} />
 
-      {/* 🔐 Layout protected (login required only) */}
       <Route
         path="/"
         element={
-          <ProtectedRoute allowedRoles={["Admin", "Manager", "User"]}>
+          <ProtectedRoute allowedRoles={["Admin", "Manager", "Employee"]}>
             <MainLayout />
           </ProtectedRoute>
         }>
-        {/* 🟢 All roles */}
+
         <Route
           index
           element={
-            <ProtectedRoute allowedRoles={["Admin", "Manager", "User"]}>
+            <ProtectedRoute allowedRoles={["Admin", "Manager", "Employee"]}>
               <Dashboard />
             </ProtectedRoute>
           }/>
 
-        {/* 🟡 Admin + Manager */}
         <Route
           path="users"
           element={
@@ -49,7 +46,6 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }/>
 
-        {/* 🔴 Admin + Manager */}
         <Route
           path="reports"
           element={
@@ -58,11 +54,10 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }/>
 
-        {/* 🟢 All roles */}
         <Route
           path="settings"
           element={
-            <ProtectedRoute allowedRoles={["Admin", "Manager", "User"]}>
+            <ProtectedRoute allowedRoles={["Admin", "Manager", "Employee"]}>
               <Settings />
             </ProtectedRoute>
           }/>
@@ -70,7 +65,7 @@ export default function AppRoutes() {
         <Route
           path="profile"
           element={
-            <ProtectedRoute allowedRoles={["Admin", "Manager", "User"]}>
+            <ProtectedRoute allowedRoles={["Admin", "Manager", "Employee"]}>
               <Profile />
             </ProtectedRoute>
           }

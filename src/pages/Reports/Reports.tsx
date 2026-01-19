@@ -7,6 +7,8 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { AgGridReact } from "ag-grid-react";
 import type { ColDef } from "ag-grid-community";
 import {
@@ -16,6 +18,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid
 } from "recharts";
 
 interface Report {
@@ -42,6 +45,19 @@ interface MonthlyRevenue {
   revenue: number;
 }
 
+const filterInputStyle = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "50px",
+    backgroundColor: "#fff",
+    "& fieldset": {
+      borderColor: "#e0e4ec",
+    },
+    "&:hover fieldset": {
+      borderColor: "#d0d4dc",
+    },
+  },
+};
+
 export default function Reports() {
   const [reports, setReports] = useState<Report[]>([]);
   const [role, setRole] = useState("");
@@ -58,28 +74,29 @@ export default function Reports() {
   }, [role, product]);
 
   const tableData = useMemo(() => {
-  const map = new Map<string, AggregatedRow>();
+    const map = new Map<string, AggregatedRow>();
 
-  reports.forEach((r) => {
-    const key = `${r.user}-${r.product}`;
+    reports.forEach((r) => {
+      const key = `${r.user}-${r.product}`;
 
-    if (!map.has(key)) {
-      map.set(key, {
-        user: r.user,
-        product: r.product,
-        quantity: r.quantity,
-        amount: r.amount,
-        status: r.status,
-      });
-    } else {
-      const existing = map.get(key)!;
-      existing.quantity += r.quantity;
-      existing.amount += r.amount;
-    }
-  });
+      if (!map.has(key)) {
+        map.set(key, {
+          user: r.user,
+          product: r.product,
+          quantity: r.quantity,
+          amount: r.amount,
+          status: r.status,
+        });
+      } else {
+        const existing = map.get(key)!;
+        existing.quantity += r.quantity;
+        existing.amount += r.amount;
+      }
+    });
 
-  return Array.from(map.values());
-}, [reports]);
+    return Array.from(map.values());
+  }, [reports]);
+
   const totalRevenue = useMemo(
     () => tableData.reduce((sum, r) => sum + r.amount, 0),
     [tableData]
@@ -129,40 +146,67 @@ export default function Reports() {
 
   return (
     <Box>
-      {/* HEADER */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center", 
           flexWrap: "wrap",
           mb: 2,
-          mt:2,
+          mt: 2,
+          gap: 2,
         }}>
         <Typography variant="h5" fontWeight={600}>
           Reports
         </Typography>
 
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
           <TextField
             select
             size="small"
-            label="Role"
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            sx={{ minWidth: 160 }}>
-            <MenuItem value="">All Roles</MenuItem>
+            sx={{ ...filterInputStyle, minWidth: 160 }}
+            SelectProps={{
+              displayEmpty: true,
+              IconComponent: KeyboardArrowDownIcon,
+              renderValue: (selected: any) => {
+                if (!selected) {
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "text.secondary" }}>
+                      <FilterListIcon sx={{ fontSize: 18 }} />
+                      Filter by Role
+                    </Box>
+                  );
+                }
+                return selected;
+              },
+            }}>
             <MenuItem value="Admin">Admin</MenuItem>
             <MenuItem value="Manager">Manager</MenuItem>
+            <MenuItem value="Employee">Employee</MenuItem>
           </TextField>
-
           <TextField
             select
             size="small"
-            label="Product"
             value={product}
             onChange={(e) => setProduct(e.target.value)}
-            sx={{ minWidth: 160 }}>
-            <MenuItem value="">All Products</MenuItem>
+            sx={{ ...filterInputStyle, minWidth: 160 }}
+            SelectProps={{
+              displayEmpty: true,
+              IconComponent: KeyboardArrowDownIcon,
+              renderValue: (selected: any) => {
+                if (!selected) {
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "text.secondary" }}>
+                      <FilterListIcon sx={{ fontSize: 18 }} />
+                      Product
+                    </Box>
+                  );
+                }
+                return selected;
+              },
+            }}>
             <MenuItem value="Laptop">Laptop</MenuItem>
             <MenuItem value="Mobiles">Mobiles</MenuItem>
             <MenuItem value="Accessories">Accessories</MenuItem>
@@ -170,9 +214,8 @@ export default function Reports() {
         </Box>
       </Box>
 
-      {/* KPIs */}
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{xs: 12, md: 6}}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="caption">Total Revenue</Typography>
             <Typography variant="h6" fontWeight={600}>
@@ -181,7 +224,7 @@ export default function Reports() {
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{xs: 12, md: 6}}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="caption">Products Sold</Typography>
             <Typography variant="h6" fontWeight={600}>
@@ -191,15 +234,15 @@ export default function Reports() {
         </Grid>
       </Grid>
 
-      {/* TREND */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} mb={1}>
           Monthly Revenue Trend
         </Typography>
         <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={monthlyTrend}>
+            <LineChart data={monthlyTrend}>
             <XAxis dataKey="month" />
             <YAxis />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />            
             <Tooltip />
             <Line
               type="monotone"
@@ -211,23 +254,25 @@ export default function Reports() {
         </ResponsiveContainer>
       </Paper>
 
-      {/* TABLE */}
       <Paper sx={{ p: 2 }}>
         <Typography variant="subtitle1" fontWeight={600} mb={1}>
           Sales Breakdown
         </Typography>
-
-        <Box className="ag-theme-quartz">
-          <AgGridReact
-            theme="legacy"
-            domLayout="autoHeight"
-            rowData={tableData}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            pagination={true}
-            paginationPageSize={5}
-            paginationPageSizeSelector={[5, 10, 20]}
-          />
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <Box className="ag-theme-quartz" sx={{ minWidth: 720 }}>
+            <AgGridReact
+              theme="legacy"
+              domLayout="autoHeight"
+              rowData={tableData}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              pagination={true}
+              paginationPageSize={5}
+              paginationPageSizeSelector={[5, 10, 20]}
+              onGridReady={(params) => params.api.sizeColumnsToFit()}
+              onGridSizeChanged={(params) => params.api.sizeColumnsToFit()}
+            />
+          </Box>
         </Box>
       </Paper>
     </Box>

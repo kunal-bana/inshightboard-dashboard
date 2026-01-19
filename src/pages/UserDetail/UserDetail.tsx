@@ -39,12 +39,12 @@ export default function UserDetail() {
         <Grid size={{ xs: 12, md: 4 }}>
           <UserInfoCard user={user} />
         </Grid>
-      
-        <Grid size={{ xs: 12, md: 8 }}>
+
+        <Grid size={{ xs: 12, md: 8 }} mt={{ xs: 4, md: 0 }}>
           <UserActivityChart data={activity} />
         </Grid>
 
-        <Grid size={{ xs: 12}} mt={6}>
+        <Grid size={{ xs: 12}} mt={4}>
           <UserHistoryTable rows={history} />
         </Grid>
       </Grid>

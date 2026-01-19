@@ -28,7 +28,7 @@ export default function Dashboard() {
   const { count } = useUserProductsSold(user?.id);
 
   useEffect(() => {
-    document.title = "Dashboard | Admin Panel";
+    document.title = "Dashboard";
   }, []);
 
   if (loading) {
@@ -40,7 +40,7 @@ if (error) {
   return (
     <Box>
       <Typography color="error">
-        We couldn’t load the dashboard data right now.
+        We couldn't load the dashboard data right now.
       </Typography>
       <Button variant="text" size="small" onClick={refetch} sx={{ mt: 0.5 }}>
         Try again
@@ -64,6 +64,7 @@ const usersByRole = transformUsersByRole(stats);
           <KpiCard
             title="Total Users"
             value={stats.totalUsers.toLocaleString()}
+            variant="purple"
             icon={<PeopleAltOutlinedIcon />}/>
         </Grid>
           {canViewRevenue(role) && (
@@ -71,17 +72,19 @@ const usersByRole = transformUsersByRole(stats);
           <KpiCard
             title="Total Revenue"
             value={formatCurrency(stats.totalRevenue)}
+            variant="orange"
             icon={<CurrencyRupeeIcon />}/>
         </Grid>)}
-        {user?.role === "User" && (
+        {user?.role === "Employee" && (
           <Grid size={{ xs: 12, md: 4 }}>
-            <ProductsSoldCard value={count}/>
+            <ProductsSoldCard value={count} />
           </Grid>)}
 
         <Grid size={{ xs: 12, md: 4 }}>
           <KpiCard
-            title="Growth"
+            title="Growth Rate"
             value={`${stats.growthPercentage}%`}
+            variant="blue"
             growth="+4.2% compared to last month"
             icon={<TrendingUpIcon />}
             positive/>

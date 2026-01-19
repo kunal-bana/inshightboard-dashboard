@@ -20,7 +20,7 @@ export default function UserHistoryTable({
   rows: HistoryRow[];
 }) {
   return (
-    <Card sx={{ p: 3 }}>
+    <Card sx={{ p: 2 }}>
       <Typography fontWeight={600} mb={2}>
         Activity History
       </Typography>

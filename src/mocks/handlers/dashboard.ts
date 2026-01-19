@@ -17,7 +17,7 @@ const dashboardData: DashboardStats = {
   usersByRole: [
     { role: "Admin", count: 8 },
     { role: "Manager", count: 16 },
-    { role: "Users", count: 100 },
+    { role: "Employee", count: 100 },
   ],
   revenueByProduct: [
     { name: "Mobiles", value: 18 },

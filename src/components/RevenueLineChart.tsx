@@ -24,6 +24,12 @@ export default function RevenueLineChart() {
         </Typography>
     <ResponsiveContainer width="100%" height={280}>
       <LineChart data={data}>
+        <defs>
+          <linearGradient id="revenueGradient" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#ff9800" />
+            <stop offset="100%" stopColor="#ffb74d" />
+            </linearGradient>
+        </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
         <XAxis dataKey="month" tick={{ fontSize: 12 }} />
         <YAxis tick={{ fontSize: 12 }} />
@@ -31,7 +37,7 @@ export default function RevenueLineChart() {
         <Line
           type="monotone"
           dataKey="revenue"
-          stroke="#1976d2"
+          stroke="url(#revenueGradient)"
           strokeWidth={3}
           dot={{ r: 4 }}
           activeDot={{ r: 6 }}

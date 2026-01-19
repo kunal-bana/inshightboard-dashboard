@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-export type UserRole = "Admin" | "Manager" | "User";
+export type UserRole = "Admin" | "Manager" | "Employee";
 
 interface User {
   id: number;
@@ -15,13 +15,15 @@ interface AuthState {
   user: User | null;
   rememberMe: boolean;
 }
+
 const getRoleFromEmail = (email: string): UserRole => {
   const lower = email.toLowerCase();
 
   if (lower.endsWith("admin@company.com")) return "Admin";
   if (lower.endsWith("manager@company.com")) return "Manager";
-  return "User";
+  return "Employee";
 };
+
 const savedAuth = localStorage.getItem("auth");
 
 const initialState: AuthState = savedAuth
@@ -37,30 +39,38 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (
-  state,
-  action: PayloadAction<{ name: string; email: string; created: string, rememberMe: boolean, id: number }>
-) => {
-  const derivedRole = getRoleFromEmail(action.payload.email);
+      state,
+      action: PayloadAction<{
+        id: number;
+        name: string;
+        email: string;
+        created: string;
+        rememberMe: boolean;
+      }>
+    ) => {
+      const derivedRole = getRoleFromEmail(action.payload.email);
 
-  state.isAuthenticated = true;
-  state.rememberMe = action.payload.rememberMe;
-  state.user = {
-    id: action.payload.id,
-    name: action.payload.name,
-    email: action.payload.email,
-    role: derivedRole,
-    created: action.payload.created,
-  };
-   if (state.rememberMe) {
-    localStorage.setItem("auth", JSON.stringify(state));
-  }
-},
+      state.isAuthenticated = true;
+      state.rememberMe = action.payload.rememberMe;
+      state.user = {
+        id: action.payload.id,
+        name: action.payload.name,
+        email: action.payload.email,
+        role: derivedRole,
+        created: action.payload.created,
+      };
+
+      if (state.rememberMe) {
+        localStorage.setItem("auth", JSON.stringify(state));
+      }
+    },
 
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
       state.rememberMe = false;
-      localStorage.removeItem("user");
+
+      localStorage.removeItem("auth");
     },
   },
 });

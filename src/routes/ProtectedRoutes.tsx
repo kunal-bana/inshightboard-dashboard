@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 
-type Role = "Admin" | "Manager" | "User";
+type Role = "Admin" | "Manager" | "Employee";
 
 export default function ProtectedRoute({
   allowedRoles,
@@ -15,16 +15,13 @@ export default function ProtectedRoute({
     (state: RootState) => state.auth
   );
 
-  // Not logged in
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Logged in but role not allowed
   if (!user || !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // Access allowed
   return children;
 }

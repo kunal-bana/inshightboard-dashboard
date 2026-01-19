@@ -159,10 +159,9 @@ export default function MainLayout(): React.JSX.Element {
     () => location.pathname.split("/").filter(Boolean),
     [location.pathname]
   );
-
-  const userInitial = user?.email
-  ? user.email.charAt(0).toUpperCase()
-  : "?";
+  const fullName = user?.name ?? "";
+  const nameParts = fullName.trim().split(" ");
+  const firstName = nameParts[0] ?? "";
 
   const handleDrawerToggle = useCallback(() => {
     setMobileDrawerOpen((prev) => !prev);
@@ -217,7 +216,7 @@ export default function MainLayout(): React.JSX.Element {
       return canViewReports(role);
     }
 
-    return true; // Dashboard, Settings always visible
+    return true;
   });
 }, [role]);
 
@@ -369,7 +368,7 @@ export default function MainLayout(): React.JSX.Element {
                 fontSize: 14,
                 fontWeight: 600,
                 }}>
-                  {userInitial}
+                  {firstName.charAt(0).toUpperCase()}
               </Avatar>
             </Box>
           </Box>
@@ -391,7 +390,6 @@ export default function MainLayout(): React.JSX.Element {
             <PersonOutlineIcon fontSize="small" />
             My Profile
             </MenuItem>
-            <Divider />
             <MenuItem onClick={logoutUser} sx={{ color: "#d32f2f" }}>
             <LogoutIcon fontSize="small" />
               Logout

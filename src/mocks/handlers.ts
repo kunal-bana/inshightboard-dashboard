@@ -75,8 +75,6 @@ const users: User[] = [
     status: "Active",
     created: "2024-06-25",
   },
-
-  // 🔹 Additional Managers (4)
   {
     id: 10,
     name: "Deepak Yadav",
@@ -112,9 +110,9 @@ const users: User[] = [
 
   ...Array.from({ length: 101 }).map((_, i) => ({
   id: i + 14,
-  name: `User ${i + 1}`,
-  email: `user${i + 1}@company.com`,
-  role: "User" as const,
+  name: `Employee ${i + 1}`,
+  email: `employee${i + 1}@company.com`,
+  role: "Employee" as const,
   status: (i % 7 === 0 ? ("Inactive" as const) : ("Active" as const)),
   created: `2024-${String((i % 12) + 1).padStart(2, "0")}-${String(
     (i % 28) + 1
@@ -157,13 +155,13 @@ export const handlers = [
   http.get("/api/users/:id/activity", ({ params }) => {
     const id = Number(params.id);
     return HttpResponse.json([
-      { day: "Mon", actions: id + 1 },
-      { day: "Tue", actions: id + 3 },
-      { day: "Wed", actions: id + 2 },
-      { day: "Thu", actions: id + 1 },
-      { day: "Fri", actions: id + 2 },
-      { day: "Sat", actions: id + 3 },
-      { day: "Sun", actions: id + 1 },
+      { day: "Mon", actions: id + 2 },
+      { day: "Tue", actions: id + 1 },
+      { day: "Wed", actions: id + 1.5 },
+      { day: "Thu", actions: id + 2 },
+      { day: "Fri", actions: id + 1.5 },
+      { day: "Sat", actions: id + 2 },
+      { day: "Sun", actions: id + 3 },
     ]);
   }),
 

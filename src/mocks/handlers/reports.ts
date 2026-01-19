@@ -10,10 +10,10 @@ const reports = Array.from({ length: 120 }).map((_, i) => {
     { name: "Vishal Kumar", role: "Manager" },
     { name: "Prakhar Pandey", role: "Manager" },
     { name: "Sneha Kapoor", role: "Admin" },  
-    { name: "User 1", role: "User" },
-    { name: "User 2", role: "User" },
-    { name: "User 3", role: "User" },
-    { name: "User 4", role: "User" },
+    { name: "Employee 1", role: "Employee" },
+    { name: "Employee 2", role: "Employee" },
+    { name: "Employee 3", role: "Employee" },
+    { name: "Employee 4", role: "Employee" },
   ];
 
   const product = products[i % products.length];

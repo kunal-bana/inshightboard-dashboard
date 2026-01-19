@@ -18,11 +18,10 @@ interface UsersByRoleChartProps {
   data: UsersByRole[];
 }
 
-const COLORS = ["#1976d2", "#9c27b0", "#ff9800", "#2e7d32"];
+const GRADIENT_IDS = ["blueGrad", "purpleGrad", "orangeGrad"];
 
 export default function UsersByRoleChart({
-  data,
-}: UsersByRoleChartProps) {
+  data,}: UsersByRoleChartProps) {
   const totalUsers = data.reduce((sum, item) => sum + item.count, 0);
 
   return (
@@ -33,6 +32,22 @@ export default function UsersByRoleChart({
 
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
+          <defs>
+            <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#1976d2" />
+              <stop offset="100%" stopColor="#42a5f5" />
+            </linearGradient>
+
+            <linearGradient id="purpleGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#7b2ff7" />
+              <stop offset="100%" stopColor="#9f67ff" />
+            </linearGradient>
+
+            <linearGradient id="orangeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ff9800" />
+              <stop offset="100%" stopColor="#ffb74d" />
+            </linearGradient>
+          </defs>
           <text
             x="50%"
             y="40%"
@@ -60,7 +75,7 @@ export default function UsersByRoleChart({
             {data.map((_, index) => (
               <Cell
                 key={index}
-                fill={COLORS[index % COLORS.length]}
+                fill={`url(#${GRADIENT_IDS[index % GRADIENT_IDS.length]})`}
                 style={{ outline: "none" }}/>
             ))}
           </Pie>

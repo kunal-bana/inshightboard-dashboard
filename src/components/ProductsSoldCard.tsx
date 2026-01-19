@@ -1,79 +1,70 @@
-import { Paper, Typography, Box} from "@mui/material";
+import { Paper, Typography, Box } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 interface Props {
-  value?: number|null;
+  value?: number | null;
 }
 
-export default function ProductsSoldCard({value}: Props) {
-
+export default function ProductsSoldCard({ value }: Props) {
   return (
     <Paper
       sx={{
-        p: 1.5,
         height: 100,
-        borderRadius: 2,
-        background: "#FFFFFF",
-        border: "1px solid #E2E8F0",
-        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.04)",
-        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        cursor: "pointer",
+        borderRadius: 3,
+        p: 1,
+        color: "#fff",
+        background: "linear-gradient(135deg, #ff9800, #ffb74d)",
         position: "relative",
         overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "2px",
-        },
+        transition: "all 0.3s ease",
+        cursor: "pointer",
         "&:hover": {
           transform: "translateY(-2px)",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",  
-          borderColor: "#3B82F6",
         },
       }}>
+      <Box
+        sx={{
+          position: "absolute",
+          right: -10,
+          top: -10,
+          opacity: 0.25,
+          "& svg": {
+            fontSize: 120,
+            color: "#fff",
+          },
+        }}>
+        <ShoppingCartIcon />
+      </Box>
+
       <Typography
-      variant="caption"
-            sx={{
-              color: "#64748B",
-              fontWeight: 600,
-              textTransform: "inherit",
-              letterSpacing: "0.4px",
-              display: "block",
-              mb: 0.3,
-              fontSize: "1rem",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}>
+        variant="body2"
+        sx={{
+          fontWeight: 600,
+          opacity: 0.9,
+          letterSpacing: "0.3px",
+        }}>
         Products Sold
       </Typography>
 
-        <Box display="flex" alignItems="center" gap={1}>
-          <ShoppingCartIcon color="primary" />
-          <Typography
-          sx={{
-              fontSize: "1.4rem",
-              fontWeight: 800,
-              background: "linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              lineHeight: 1,
-            }}>
-            {value}
-          </Typography>
-        </Box>
+      <Typography
+        sx={{
+          fontSize: "2rem",
+          fontWeight: 800,
+          lineHeight: 1.1,
+          mt: 0.5,
+        }}>
+        {value ?? 0}
+      </Typography>
 
-        <Typography variant="body2" color="text.secondary">
-          Your contribution
-        </Typography>
-
+      <Typography
+        variant="caption"
+        sx={{
+          opacity: 0.85,
+          fontWeight: 600,
+          mt: 0.5,
+        }}>
+        Your contribution
+      </Typography>
     </Paper>
   );
 }
