@@ -18,8 +18,7 @@ export default function App() {
 
     init();
   }, []);
-
-  
+  if (!ready) return <div>Loading...</div>;
 
   return (
     <BrowserRouter>
