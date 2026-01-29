@@ -241,13 +241,6 @@ export default function MainLayout(): React.JSX.Element {
           }}>
           ElectroDash
         </Typography>
-        <IconButton
-          onClick={handleDrawerClose}
-          sx={{
-            color: COLORS.text,
-          }}>
-          <CloseIcon />
-        </IconButton>
       </Toolbar>
 
       <Divider sx={{ display: { xs: "block", md: "none" } }} />
