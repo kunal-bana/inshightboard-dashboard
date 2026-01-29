@@ -8,25 +8,24 @@ export default function App() {
 
   useEffect(() => {
     async function init() {
-      if (import.meta.env.DEV) {
-        const { worker } = await import("./mocks/browser");
-        await worker.start({
-          onUnhandledRequest: "bypass",
-        });
-      }
+      const { worker } = await import("./mocks/browser");
+      await worker.start({
+        onUnhandledRequest: "bypass",
+      });
+
       setReady(true);
     }
 
     init();
   }, []);
 
-  if (!ready) return null;
+  
 
   return (
     <BrowserRouter>
-    <ErrorBoundary>
-      <AppRoutes />
-    </ErrorBoundary>
+      <ErrorBoundary>
+        <AppRoutes />
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
