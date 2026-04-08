@@ -26,6 +26,18 @@ A professional admin dashboard built using **React**, **Redux Toolkit**, **MSW**
 - AG Grid
 - Recharts
 
+## 🚀 User Login
+-Admin
+email-admin@company.com
+password-12345678
+
+-Manager
+email-manager@company.com
+password-12345678
+
+-Employee
+email-employee2@company.com
+password-12345678
 ## 🚀 Getting Started
 ```bash
 npm install
